@@ -1,24 +1,23 @@
-name: Download a File
+name: Run Script
 
 on:
-  workflow_dispatch:  
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 jobs:
-  download:
+  build:
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      
-    - name: Download file using curl
-      run: |
-        curl -L "https://www.tasnimnews.ir/fa/news/1405/01/21/3562153/%D9%88%DB%8C%D8%AA%D8%B1%DB%8C%D9%86-%D8%AA%D8%B3%D9%86%DB%8C%D9%85-%D8%B4%D9%85%D8%A7%D8%B1%D9%87-988-%D8%A8%D8%B1%D8%AE%DB%8C%D8%B2-%D9%88-%D8%A7%D9%88%D9%84-%D8%AA%D9%88-%D8%A8%DA%A9%D8%B4" --output my-downloaded-file.jpg
-      
-    - name: Commit and save the downloaded file
-      run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git add my-downloaded-file.pdf
-        git commit -m "Add downloaded file" || echo "No changes to commit"
-        git push
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - uses: jannekem/run-python-script-action@v1
+        with:
+          script: |
+            import os
+            print("Directory contents:")
+            for f in os.listdir():
+                print(f)
